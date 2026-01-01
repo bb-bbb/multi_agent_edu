@@ -1,255 +1,222 @@
+# 🎓 EduCoach AI - 영어 독해 평가 시스템
 
----
+고정 지문으로 사용자의 영어 독해, 문법, 어휘를 평가하고 맞춤 학습 방법을 추천하는 AI 서비스
 
-```markdown
-# EduCoach AI  
-**개인화 학습을 위한 교육 특화 Multi-Agent AI 시스템**
+## 📖 평가 지문
 
-EduCoach AI는 대형 언어 모델(LLM)과 **멀티 에이전트 아키텍처**를 활용하여  
-학습 진단, 학습 추천, 실시간 코칭을 지원하는 **교육 특화 AI 시스템**입니다.
-
-이 프로젝트는 교육 도메인에서  
-**AI Agent 설계, 컨텍스트 엔지니어링, RAG 파이프라인**을  
-어떻게 구조적으로 적용할 수 있는지를 탐구하는 것을 목표로 합니다.
-
----
-
-## Overview
-
-최근 LLM은 강력한 성능을 보여주고 있지만,  
-학습자의 수준, 목표, 학습 이력과 같은 **개인 맥락을 구조적으로 이해하는 데에는 한계**가 있습니다.
-
-EduCoach AI는 이러한 문제를 해결하기 위해 다음과 같은 접근을 사용합니다.
-
-- 역할이 분리된 AI Agent 설계
-- 학습자 중심 컨텍스트 구조화
-- 검색 기반(RAG) 동적 정보 주입
-
-본 프로젝트는 상용 서비스를 목표로 하기보다는,  
-**교육 AI Agent 시스템의 설계 사고와 구현 패턴을 공유**하는 데 초점을 둡니다.
-
----
-
-## Key Features
-
-- 학습 진단·추천·코칭을 위한 Multi-Agent 구조
-- 학습자 프로파일 기반 동적 컨텍스트 구성
-- 교육 자료를 활용한 RAG 파이프라인
-- OpenAI / Anthropic 등 LLM 벤더 독립적 설계
-- RESTful Backend API 및 프로토타입 Frontend 제공
-
----
-
-## System Architecture
-
-본 시스템은 오케스트레이터를 중심으로 여러 전문 Agent가 협력하는 구조로 설계되었습니다.
+**Passage:**
 
 ```
+Many people believe that success is only about talent or luck, but in reality, 
+persistence plays a much bigger role. History shows countless examples of 
+individuals who failed many times before achieving their goals. For instance, 
+Thomas Edison tested thousands of materials before inventing the light bulb. 
+His determination proved that consistent effort can lead to remarkable results.
 
-User
-↓
-Orchestrator Agent
-↓
-┌──────────────────┬────────────────────┬──────────────────┐
-| Diagnosis Agent | Recommendation Agent | Coaching Agent |
-└──────────────────┴────────────────────┴──────────────────┘
-↓
-RAG / Context Layer
-↓
-LLM
-
+In modern society, persistence is still essential. Students who continue studying 
+even after facing difficulties often perform better than those who give up quickly. 
+Similarly, athletes train for years to improve their skills, even when progress 
+seems slow. These examples remind us that success is not a single event but a 
+journey that requires patience and hard work.
 ```
 
-각 Agent는 명확한 역할과 책임을 가지며,  
-단일 프롬프트 기반 시스템보다 **확장성과 유지보수성이 뛰어난 구조**를 제공합니다.
+**평가 질문 (3개):**
 
----
+1. What is the main idea of this passage?
+2. Give an example from the passage that supports the importance of persistence.
+3. In your own words, explain why persistence is important in modern society.
 
-## Agents Design
+## 📁 프로젝트 구조
 
-### Diagnosis Agent
-- 학습자 프로파일 및 학습 이력 분석
-- 취약 영역 및 학습 수준 진단
+```
+educoach-ai/
+├── agents/
+│   ├── evaluation_agent.py      # 평가 (독해/문법/어휘)
+│   ├── diagnosis_agent.py       # 진단 (수준 판정)
+│   └── recommendation_agent.py  # 학습 추천
+├── api/
+│   └── main.py                  # FastAPI 서버
+├── .env                         # 환경 변수 (API 키)
+├── requirements.txt             # 패키지 목록
+└── README.md
+```
 
-### Recommendation Agent
-- 다음 학습 주제 및 자료 추천
-- 검색된 교육 콘텐츠 기반 추천 수행
+## 🚀 설치 및 실행
 
-### Coaching Agent
-- 실시간 학습 피드백 제공
-- 학습자 수준에 맞춘 설명 깊이 조절
+### 1. 패키지 설치
 
-### Orchestrator
-- Agent 실행 순서 관리
-- Agent 결과를 종합하여 최종 응답 생성
+```bash
+pip install -r requirements.txt
+```
 
----
+### 2. 환경 변수 설정
 
-## Context Engineering
+`.env` 파일 생성:
 
-본 프로젝트에서는 **컨텍스트를 단순한 텍스트가 아닌 설계 요소**로 취급합니다.
+```bash
+ANTHROPIC_API_KEY=your_actual_api_key
+```
 
-### 컨텍스트 구성 요소
-- 학습자 프로파일 (수준, 목표, 약점)
-- 학습 이력 (학습 주제, 점수, 진행 상황)
-- RAG를 통해 검색된 교육 자료
-- 현재 수행 중인 학습 태스크 상태
+### 3. 서버 실행
 
-요청마다 고정된 프롬프트를 사용하는 대신,  
-**상황에 따라 동적으로 컨텍스트를 조합**합니다.
+```bash
+uvicorn api.main:app --reload
+```
 
-예시 (단순화):
+서버 주소: `http://127.0.0.1:8000`
+
+## 📖 API 사용법
+
+### 방법 1: Swagger UI 사용 (추천)
+
+1. 브라우저에서 `http://127.0.0.1:8000/docs` 열기
+2. **GET /passage** 실행하여 지문 확인
+   ```json
+   {
+     "passage": "Many people believe...",
+     "questions": [...]
+   }
+   ```
+3. **POST /evaluate** 에서 답변 제출
+   ```json
+   {
+     "answers": [
+       "The main idea is that persistence is more important than talent.",
+       "Thomas Edison tested thousands of materials before inventing the light bulb.",
+       "Persistence helps students and athletes achieve their goals through consistent effort."
+     ]
+   }
+   ```
+
+### 방법 2: cURL 사용
+
+#### 지문 가져오기
+
+```bash
+curl http://127.0.0.1:8000/passage
+```
+
+#### 답변 평가하기
+
+```bash
+curl -X POST http://127.0.0.1:8000/evaluate \
+  -H "Content-Type: application/json" \
+  -d '{
+    "answers": [
+      "The main idea is that persistence is more important than talent.",
+      "Thomas Edison tested thousands of materials.",
+      "Persistence helps students overcome difficulties."
+    ]
+  }'
+```
+
+## 📊 응답 예시
 
 ```json
 {
-  "learner_level": "중급",
-  "goal": "TOEIC 900",
-  "weakness": ["독해 Part 7"],
-  "current_task": "학습 진단"
+  "scores": {
+    "reading_comprehension": 85,
+    "grammar": 70,
+    "vocabulary": 75,
+    "feedback": "지문의 주제를 잘 이해했습니다. 문법은 기본적으로 정확하나 복잡한 문장 구조 연습이 필요합니다."
+  },
+  "diagnosis": {
+    "level": "intermediate",
+    "weakness": ["문법"],
+    "diagnosis_summary": "문법 영역에서 보완이 필요합니다."
+  },
+  "recommendations": {
+    "level_advice": "중급 학습자를 위한 추천입니다.",
+    "weakness_recommendations": [
+      "복잡한 문장 구조 학습 (관계대명사, 접속사)",
+      "영작 연습으로 문법 적용력 키우기",
+      "온라인 문법 퀴즈 풀기"
+    ],
+    "general_tips": [
+      "실전 영어 사용 기회를 늘리세요",
+      "영어 일기 쓰기 도전",
+      "온라인 언어 교환 파트너 찾기"
+    ]
+  }
 }
 ```
 
----
+## 🎯 평가 기준
 
-## RAG Pipeline
+### 점수 범위 (0-100)
 
-1. 교육 자료(PDF, 노트 등) 수집
-2. 문서 분할(Chunking) 및 임베딩 생성
-3. 벡터 데이터베이스에 저장
-4. 태스크에 따라 관련 문서 검색
-5. 검색 결과를 Agent 컨텍스트에 주입
+* **독해 (Reading Comprehension)** : 지문 이해도, 주제 파악, 세부 내용 이해
+* **문법 (Grammar)** : 문장 구조, 시제, 품사 사용
+* **어휘 (Vocabulary)** : 단어 선택, 어휘 다양성, 고급 어휘 사용
 
-설계 시 고려 사항:
+### 수준 판정
 
-* Chunk 크기와 검색 정확도의 균형
-* Top-k 조절을 통한 비용 및 응답 품질 최적화
+| 평균 점수 | 수준         | 설명           |
+| --------- | ------------ | -------------- |
+| 0-59      | Beginner     | 기초 학습 필요 |
+| 60-79     | Intermediate | 중급 학습자    |
+| 80-100    | Advanced     | 고급 학습자    |
 
----
+## 🔧 트러블슈팅
 
-## Prompt Design
+### 1. API 키 오류
 
-* System / Task / Context 역할 분리
-* Agent별 시스템 프롬프트 설계
-* 프롬프트 버전 관리 및 실험 기록
+```
+Error: API key not found
+```
 
-본 프로젝트의 목표는
-“한 번 잘 되는 프롬프트”가 아니라
-**일관되고 재현 가능한 응답을 생성하는 구조**입니다.
+**해결:** `.env` 파일에 올바른 API 키 입력 확인
 
----
+### 2. 모듈을 찾을 수 없음
 
-## LLM Integration
+```
+ModuleNotFoundError: No module named 'agents'
+```
 
-LLM 벤더 종속성을 줄이기 위해 공통 인터페이스를 사용합니다.
-
-지원 또는 확장 예정:
-
-* OpenAI (GPT-4 / GPT-4o)
-* Anthropic Claude (실험적)
-
-설계 목표:
-
-* 모델 교체 용이성
-* 컨텍스트 길이 제어
-* 비용 효율적인 호출
-
----
-
-## API & Service Layer
-
-Backend는 FastAPI 기반으로 구현되었으며,
-RESTful 원칙에 따라 설계되었습니다.
-
-주요 엔드포인트 예시:
-
-* `POST /diagnose`
-* `POST /recommend`
-* `POST /coach`
-
-API는 Frontend 및 외부 시스템 연동을 고려하여 설계되었습니다.
-
----
-
-## Frontend (Prototype)
-
-프로토타입 수준의 Frontend를 제공하여
-Agent 동작 흐름과 사용자 경험을 검증합니다.
-
-* UI 완성도보다 인터랙션 흐름에 집중
-* 사용자 테스트 및 디버깅 목적
-
----
-
-## Installation & Usage
+**해결:** 프로젝트 루트 디렉토리에서 실행
 
 ```bash
-git clone https://github.com/your-username/educoach-ai.git
-cd educoach-ai
-
-pip install -r requirements.txt
-cp .env.example .env
-uvicorn app.main:app --reload
+uvicorn api.main:app --reload
 ```
 
-필요 환경 변수:
+### 3. 답변 개수 오류
 
-* `OPENAI_API_KEY`
-* `ANTHROPIC_API_KEY` (선택)
-
----
-
-## Project Structure
-
-```text
-educoach-ai/
- ├── agents/
- ├── orchestration/
- ├── rag/
- ├── prompts/
- ├── api/
- ├── frontend/
- └── README.md
+```
+400 Bad Request: 3개의 질문에 대한 답변이 필요합니다
 ```
 
----
+**해결:** 반드시 3개의 답변을 배열로 전달
 
-## Limitations
+## 🌐 프론트엔드 연동 예시
 
-* 실제 교육 데이터가 아닌 단순화된 예제 데이터 사용
-* 응답 품질에 대한 정량적 평가 지표 부족
-* 세션 간 장기 메모리 미구현
+```javascript
+// 1. 지문 가져오기
+const passageResponse = await fetch('http://127.0.0.1:8000/passage');
+const { passage, questions } = await passageResponse.json();
 
----
+// 2. 사용자 답변 수집 후 평가
+const answers = [
+  userAnswer1,
+  userAnswer2,
+  userAnswer3
+];
 
-## Future Work
+const evaluateResponse = await fetch('http://127.0.0.1:8000/evaluate', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ answers })
+});
 
-* 음성·이미지 입력을 포함한 멀티모달 확장
-* Agent 응답 품질 평가 체계 강화
-* 실제 교육 데이터셋 연동
-* 정교한 학습자 모델링
+const result = await evaluateResponse.json();
+console.log(result.scores);
+console.log(result.diagnosis);
+console.log(result.recommendations);
+```
 
----
+## 📝 다음 단계
 
-## Tech Stack
-
-* Python
-* LangChain / LangGraph
-* FastAPI
-* Vector Database (FAISS / Chroma)
-* OpenAI / Anthropic API
-
----
-
-## License
-
-MIT License
-
----
-
-## Acknowledgements
-
-본 프로젝트는 다음 분야의 연구 및 오픈소스 프로젝트에서 영감을 받았습니다.
-
-* LLM 기반 Agent 시스템
-* Retrieval-Augmented Generation (RAG)
-* 교육 분야 AI 응용
+* [ ] 사용자 인증 시스템
+* [ ] 평가 이력 저장 (DB)
+* [ ] 다양한 난이도의 지문 추가
+* [ ] 프론트엔드 UI 개발
+* [ ] 학습 진도 추적 기능
